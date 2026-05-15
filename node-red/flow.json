@@ -154,6 +154,21 @@
         "className": ""
     },
     {
+        "id": "22840f6e7c5bb62b",
+        "type": "influxdb",
+        "hostname": "127.0.0.1",
+        "port": 8086,
+        "protocol": "http",
+        "database": "database",
+        "name": "InfluxDB Cloud",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "https://eu-central-1-1.aws.cloud2.influxdata.com",
+        "timeout": 10,
+        "rejectUnauthorized": true
+    },
+    {
         "id": "0530be2b41d5c4c7",
         "type": "mqtt in",
         "z": "51bcf57d9b169a2e",
@@ -233,16 +248,102 @@
         "correl": "",
         "expiry": "",
         "broker": "becc0d776c5ade83",
-        "x": 340,
+        "x": 360,
         "y": 120,
         "wires": []
     },
     {
-        "id": "5ef19b31ce31a25f",
+        "id": "ce3238f4a462d4cd",
+        "type": "ui_button",
+        "z": "51bcf57d9b169a2e",
+        "name": "",
+        "group": "cae9c8a296b1b940",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "LED OFF",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "{   \"state\": false }",
+        "payloadType": "json",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 120,
+        "y": 200,
+        "wires": [
+            [
+                "146e4e9159a5769b"
+            ]
+        ]
+    },
+    {
+        "id": "146e4e9159a5769b",
+        "type": "mqtt out",
+        "z": "51bcf57d9b169a2e",
+        "name": "",
+        "topic": "lnu/iot/ll224ve/command/led",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "becc0d776c5ade83",
+        "x": 360,
+        "y": 200,
+        "wires": []
+    },
+    {
+        "id": "9a74ed76d42188fc",
+        "type": "mqtt in",
+        "z": "51bcf57d9b169a2e",
+        "name": "",
+        "topic": "lnu/iot/ll224ve/sensor",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "becc0d776c5ade83",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 160,
+        "y": 280,
+        "wires": [
+            [
+                "b555122bdca27fb8"
+            ]
+        ]
+    },
+    {
+        "id": "b555122bdca27fb8",
+        "type": "influxdb out",
+        "z": "51bcf57d9b169a2e",
+        "influxdb": "22840f6e7c5bb62b",
+        "name": "InfluxDB",
+        "measurement": "environment",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "ll224ve-iot",
+        "bucket": "sensor-data",
+        "x": 380,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "b5a89b916a79f5b1",
         "type": "global-config",
         "env": [],
         "modules": {
-            "node-red-dashboard": "3.6.6"
+            "node-red-dashboard": "3.6.6",
+            "node-red-contrib-influxdb": "0.7.0"
         }
     }
 ]
