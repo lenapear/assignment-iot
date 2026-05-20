@@ -372,7 +372,7 @@
         "z": "51bcf57d9b169a2e",
         "influxdb": "22840f6e7c5bb62b",
         "name": "Flux Query",
-        "query": "from(bucket: \"sensor-data\")\n  |> range(start: -7d)\n  |> filter(fn: (r) => r._measurement == \"environment\")\n  |> filter(fn: (r) => r._field == \"temperature\")",
+        "query": "from(bucket: \"sensor-data\")\n  |> range(start: 30m)\n  |> filter(fn: (r) => r._measurement == \"environment\")\n  |> filter(fn: (r) => r._field == \"temperature\")",
         "rawOutput": false,
         "precision": "",
         "retentionPolicy": "",
@@ -389,7 +389,7 @@
         "id": "83b071281e9971e3",
         "type": "function",
         "z": "51bcf57d9b169a2e",
-        "name": "Data Transformation",
+        "name": "Data Transformation (Historical)",
         "func": "let data = [];\n\nfor (let item of msg.payload) {\n\n    data.push({\n        x: new Date(item._time),\n        y: item._value\n    });\n\n}\n\nmsg.payload = [{\n    series: [\"Temperature\"],\n    data: [data],\n    labels: []\n}];\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
@@ -397,7 +397,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 520,
+        "x": 550,
         "y": 360,
         "wires": [
             [
@@ -417,15 +417,15 @@
         "label": "Temp Chart",
         "chartType": "line",
         "legend": "false",
-        "xformat": "dd HH:mm",
+        "xformat": "HH:mm:ss",
         "interpolate": "linear",
         "nodata": "",
         "dot": false,
         "ymin": "-10",
         "ymax": "50",
-        "removeOlder": "12",
+        "removeOlder": "30",
         "removeOlderPoints": "500",
-        "removeOlderUnit": "3600",
+        "removeOlderUnit": "60",
         "cutout": 0,
         "useOneColor": false,
         "useUTC": false,
@@ -443,14 +443,55 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 750,
-        "y": 360,
+        "x": 810,
+        "y": 420,
         "wires": [
             []
         ]
     },
     {
-        "id": "7c4cfe1b9d5d0819",
+        "id": "a52fcc1804afef9a",
+        "type": "mqtt in",
+        "z": "51bcf57d9b169a2e",
+        "name": "",
+        "topic": "lnu/iot/ll224ve/sensor",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "becc0d776c5ade83",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 160,
+        "y": 440,
+        "wires": [
+            [
+                "6e6ef5029309a52c"
+            ]
+        ]
+    },
+    {
+        "id": "6e6ef5029309a52c",
+        "type": "function",
+        "z": "51bcf57d9b169a2e",
+        "name": "Data Transformation (Live)",
+        "func": "msg.payload = msg.payload.temperature;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 440,
+        "wires": [
+            [
+                "9c48749a5393463d"
+            ]
+        ]
+    },
+    {
+        "id": "5d0cf1538e4d6d9c",
         "type": "global-config",
         "env": [],
         "modules": {
