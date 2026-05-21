@@ -53,9 +53,10 @@
             "name": "theme-light",
             "lightTheme": {
                 "default": "#0094CE",
-                "baseColor": "#0094CE",
+                "baseColor": "#b0dd98",
                 "baseFont": "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
-                "edited": false
+                "edited": true,
+                "reset": false
             },
             "darkTheme": {
                 "default": "#097479",
@@ -72,11 +73,11 @@
             "themeState": {
                 "base-color": {
                     "default": "#0094CE",
-                    "value": "#0094CE",
-                    "edited": false
+                    "value": "#b0dd98",
+                    "edited": true
                 },
                 "page-titlebar-backgroundColor": {
-                    "value": "#0094CE",
+                    "value": "#b0dd98",
                     "edited": false
                 },
                 "page-backgroundColor": {
@@ -88,7 +89,7 @@
                     "edited": false
                 },
                 "group-textColor": {
-                    "value": "#1bbfff",
+                    "value": "#dcf0d1",
                     "edited": false
                 },
                 "group-borderColor": {
@@ -104,7 +105,7 @@
                     "edited": false
                 },
                 "widget-backgroundColor": {
-                    "value": "#0094ce",
+                    "value": "#b0dd98",
                     "edited": false
                 },
                 "widget-borderColor": {
@@ -145,11 +146,11 @@
     {
         "id": "cae9c8a296b1b940",
         "type": "ui_group",
-        "name": "Default",
+        "name": "1dv027 IoT Dashboard",
         "tab": "fa6d7683453e99f1",
         "order": 1,
         "disp": true,
-        "width": 6,
+        "width": "12",
         "collapse": false,
         "className": ""
     },
@@ -167,6 +168,15 @@
         "url": "https://eu-central-1-1.aws.cloud2.influxdata.com",
         "timeout": 10,
         "rejectUnauthorized": true
+    },
+    {
+        "id": "520a4af4cfe69f3c",
+        "type": "ui_group",
+        "name": "Group 2",
+        "tab": "fa6d7683453e99f1",
+        "order": 2,
+        "disp": true,
+        "width": 6
     },
     {
         "id": "0530be2b41d5c4c7",
@@ -372,7 +382,7 @@
         "z": "51bcf57d9b169a2e",
         "influxdb": "22840f6e7c5bb62b",
         "name": "Flux Query",
-        "query": "from(bucket: \"sensor-data\")\n  |> range(start: 30m)\n  |> filter(fn: (r) => r._measurement == \"environment\")\n  |> filter(fn: (r) => r._field == \"temperature\")",
+        "query": "from(bucket: \"sensor-data\")\n  |> range(start: -7d)\n  |> filter(fn: (r) => r._measurement == \"environment\")\n  |> filter(fn: (r) => r._field == \"temperature\")",
         "rawOutput": false,
         "precision": "",
         "retentionPolicy": "",
@@ -409,12 +419,12 @@
         "id": "9c48749a5393463d",
         "type": "ui_chart",
         "z": "51bcf57d9b169a2e",
-        "name": "",
+        "name": "Temperature Chart",
         "group": "cae9c8a296b1b940",
         "order": 2,
-        "width": 0,
-        "height": 0,
-        "label": "Temp Chart",
+        "width": "12",
+        "height": "6",
+        "label": "Temperature Chart",
         "chartType": "line",
         "legend": "false",
         "xformat": "HH:mm:ss",
@@ -443,7 +453,7 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 810,
+        "x": 830,
         "y": 420,
         "wires": [
             []
@@ -491,7 +501,160 @@
         ]
     },
     {
-        "id": "5d0cf1538e4d6d9c",
+        "id": "f6ea5cac6ff005e0",
+        "type": "inject",
+        "z": "51bcf57d9b169a2e",
+        "name": "Inject",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.5",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 540,
+        "wires": [
+            [
+                "35ac101e29e5d5d7"
+            ]
+        ]
+    },
+    {
+        "id": "35ac101e29e5d5d7",
+        "type": "influxdb in",
+        "z": "51bcf57d9b169a2e",
+        "influxdb": "22840f6e7c5bb62b",
+        "name": "Flux Query",
+        "query": "from(bucket: \"sensor-data\")\n  |> range(start: -7d)\n  |> filter(fn: (r) => r._measurement == \"environment\")\n  |> filter(fn: (r) => r._field == \"temperature\")",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "org": "ll224ve-iot",
+        "x": 290,
+        "y": 540,
+        "wires": [
+            [
+                "cf70c7f7b2998ff1"
+            ]
+        ]
+    },
+    {
+        "id": "cf70c7f7b2998ff1",
+        "type": "function",
+        "z": "51bcf57d9b169a2e",
+        "name": "Data Transformation (Historical)",
+        "func": "let data = [];\n\nfor (let item of msg.payload) {\n\n    data.push({\n        x: new Date(item._time),\n        y: item._value\n    });\n\n}\n\nmsg.payload = [{\n    series: [\"Humidity\"],\n    data: [data],\n    labels: []\n}];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 540,
+        "wires": [
+            [
+                "a7dc174f7d55369c"
+            ]
+        ]
+    },
+    {
+        "id": "a7dc174f7d55369c",
+        "type": "ui_chart",
+        "z": "51bcf57d9b169a2e",
+        "name": "Temperature Chart",
+        "group": "cae9c8a296b1b940",
+        "order": 2,
+        "width": "12",
+        "height": "6",
+        "label": "Humidity Chart",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "-10",
+        "ymax": "50",
+        "removeOlder": "30",
+        "removeOlderPoints": "500",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 830,
+        "y": 600,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8f6ff14decc6e28a",
+        "type": "mqtt in",
+        "z": "51bcf57d9b169a2e",
+        "name": "",
+        "topic": "lnu/iot/ll224ve/sensor",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "becc0d776c5ade83",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 160,
+        "y": 620,
+        "wires": [
+            [
+                "6ff7ebbc57bfbed7"
+            ]
+        ]
+    },
+    {
+        "id": "6ff7ebbc57bfbed7",
+        "type": "function",
+        "z": "51bcf57d9b169a2e",
+        "name": "Data Transformation (Live)",
+        "func": "msg.payload = msg.payload.humidity;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 620,
+        "wires": [
+            [
+                "a7dc174f7d55369c"
+            ]
+        ]
+    },
+    {
+        "id": "e58d9ad2d5582a1c",
         "type": "global-config",
         "env": [],
         "modules": {
