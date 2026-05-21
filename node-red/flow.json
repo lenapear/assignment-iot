@@ -584,8 +584,8 @@
         "interpolate": "linear",
         "nodata": "",
         "dot": false,
-        "ymin": "-10",
-        "ymax": "50",
+        "ymin": "0",
+        "ymax": "100",
         "removeOlder": "30",
         "removeOlderPoints": "500",
         "removeOlderUnit": "60",
@@ -654,7 +654,7 @@
         ]
     },
     {
-        "id": "9c3bc7a87a8fcb4f",
+        "id": "bc82d81b240cf2da",
         "type": "global-config",
         "env": [],
         "modules": {
