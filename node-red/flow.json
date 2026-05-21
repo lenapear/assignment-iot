@@ -381,13 +381,13 @@
         "type": "influxdb in",
         "z": "51bcf57d9b169a2e",
         "influxdb": "22840f6e7c5bb62b",
-        "name": "Flux Query",
+        "name": "Temperature Query",
         "query": "from(bucket: \"sensor-data\")\n  |> range(start: -7d)\n  |> filter(fn: (r) => r._measurement == \"environment\")\n  |> filter(fn: (r) => r._field == \"temperature\")",
         "rawOutput": false,
         "precision": "",
         "retentionPolicy": "",
         "org": "ll224ve-iot",
-        "x": 290,
+        "x": 310,
         "y": 360,
         "wires": [
             [
@@ -399,7 +399,7 @@
         "id": "83b071281e9971e3",
         "type": "function",
         "z": "51bcf57d9b169a2e",
-        "name": "Data Transformation (Historical)",
+        "name": "Temperature Transformation (Historical)",
         "func": "let data = [];\n\nfor (let item of msg.payload) {\n\n    data.push({\n        x: new Date(item._time),\n        y: item._value\n    });\n\n}\n\nmsg.payload = [{\n    series: [\"Temperature\"],\n    data: [data],\n    labels: []\n}];\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
@@ -407,7 +407,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 550,
+        "x": 620,
         "y": 360,
         "wires": [
             [
@@ -453,7 +453,7 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 830,
+        "x": 930,
         "y": 420,
         "wires": [
             []
@@ -484,7 +484,7 @@
         "id": "6e6ef5029309a52c",
         "type": "function",
         "z": "51bcf57d9b169a2e",
-        "name": "Data Transformation (Live)",
+        "name": "Temperature Transformation (Live)",
         "func": "msg.payload = msg.payload.temperature;\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
@@ -492,7 +492,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 430,
+        "x": 460,
         "y": 440,
         "wires": [
             [
@@ -534,13 +534,13 @@
         "type": "influxdb in",
         "z": "51bcf57d9b169a2e",
         "influxdb": "22840f6e7c5bb62b",
-        "name": "Flux Query",
-        "query": "from(bucket: \"sensor-data\")\n  |> range(start: -7d)\n  |> filter(fn: (r) => r._measurement == \"environment\")\n  |> filter(fn: (r) => r._field == \"temperature\")",
+        "name": "Humidity Query",
+        "query": "from(bucket: \"sensor-data\")\n  |> range(start: -7d)\n  |> filter(fn: (r) => r._measurement == \"environment\")\n  |> filter(fn: (r) => r._field == \"humidity\")",
         "rawOutput": false,
         "precision": "",
         "retentionPolicy": "",
         "org": "ll224ve-iot",
-        "x": 290,
+        "x": 300,
         "y": 540,
         "wires": [
             [
@@ -552,7 +552,7 @@
         "id": "cf70c7f7b2998ff1",
         "type": "function",
         "z": "51bcf57d9b169a2e",
-        "name": "Data Transformation (Historical)",
+        "name": "Humidity Transformation (Historical)",
         "func": "let data = [];\n\nfor (let item of msg.payload) {\n\n    data.push({\n        x: new Date(item._time),\n        y: item._value\n    });\n\n}\n\nmsg.payload = [{\n    series: [\"Humidity\"],\n    data: [data],\n    labels: []\n}];\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
@@ -560,7 +560,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 550,
+        "x": 560,
         "y": 540,
         "wires": [
             [
@@ -572,7 +572,7 @@
         "id": "a7dc174f7d55369c",
         "type": "ui_chart",
         "z": "51bcf57d9b169a2e",
-        "name": "Temperature Chart",
+        "name": "Humidity Chart",
         "group": "cae9c8a296b1b940",
         "order": 2,
         "width": "12",
@@ -606,7 +606,7 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 830,
+        "x": 820,
         "y": 600,
         "wires": [
             []
@@ -637,7 +637,7 @@
         "id": "6ff7ebbc57bfbed7",
         "type": "function",
         "z": "51bcf57d9b169a2e",
-        "name": "Data Transformation (Live)",
+        "name": "Humdity Transformation (Live)",
         "func": "msg.payload = msg.payload.humidity;\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
@@ -645,7 +645,7 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 430,
+        "x": 450,
         "y": 620,
         "wires": [
             [
@@ -654,7 +654,7 @@
         ]
     },
     {
-        "id": "e58d9ad2d5582a1c",
+        "id": "9c3bc7a87a8fcb4f",
         "type": "global-config",
         "env": [],
         "modules": {
