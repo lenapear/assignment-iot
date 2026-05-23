@@ -2,7 +2,23 @@
     {
         "id": "51bcf57d9b169a2e",
         "type": "tab",
-        "label": "Flow 1",
+        "label": "MQTT + Database",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "7156df95dd73e491",
+        "type": "tab",
+        "label": "Historical Data",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "93e19b05538bf5eb",
+        "type": "tab",
+        "label": "Dashboard / Live Widgets",
         "disabled": false,
         "info": "",
         "env": []
@@ -182,7 +198,7 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 160,
+        "x": 140,
         "y": 40,
         "wires": [
             [
@@ -203,7 +219,7 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 380,
+        "x": 360,
         "y": 40,
         "wires": []
     },
@@ -227,8 +243,8 @@
         "payloadType": "json",
         "topic": "topic",
         "topicType": "msg",
-        "x": 120,
-        "y": 100,
+        "x": 100,
+        "y": 180,
         "wires": [
             [
                 "d049fa9498ad24ad"
@@ -249,8 +265,8 @@
         "correl": "",
         "expiry": "",
         "broker": "becc0d776c5ade83",
-        "x": 360,
-        "y": 100,
+        "x": 340,
+        "y": 180,
         "wires": []
     },
     {
@@ -273,8 +289,8 @@
         "payloadType": "json",
         "topic": "topic",
         "topicType": "msg",
-        "x": 120,
-        "y": 160,
+        "x": 100,
+        "y": 240,
         "wires": [
             [
                 "146e4e9159a5769b"
@@ -295,8 +311,8 @@
         "correl": "",
         "expiry": "",
         "broker": "becc0d776c5ade83",
-        "x": 360,
-        "y": 160,
+        "x": 340,
+        "y": 240,
         "wires": []
     },
     {
@@ -312,8 +328,8 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 160,
-        "y": 220,
+        "x": 140,
+        "y": 100,
         "wires": [
             [
                 "b555122bdca27fb8"
@@ -334,14 +350,53 @@
         "retentionPolicyV18Flux": "",
         "org": "ll224ve-iot",
         "bucket": "sensor-data",
-        "x": 380,
-        "y": 220,
+        "x": 360,
+        "y": 100,
         "wires": []
     },
     {
-        "id": "7ccc98ddf63eebb9",
+        "id": "0eece5e2d22463e1",
+        "type": "influxdb in",
+        "z": "7156df95dd73e491",
+        "influxdb": "22840f6e7c5bb62b",
+        "name": "Temperature Query",
+        "query": "from(bucket: \"sensor-data\")\n  |> range(start: -7d)\n  |> filter(fn: (r) => r._measurement == \"environment\")\n  |> filter(fn: (r) => r._field == \"temperature\")",
+        "rawOutput": false,
+        "precision": "",
+        "retentionPolicy": "",
+        "org": "ll224ve-iot",
+        "x": 270,
+        "y": 60,
+        "wires": [
+            [
+                "dc794944b30a09ad"
+            ]
+        ]
+    },
+    {
+        "id": "dc794944b30a09ad",
+        "type": "function",
+        "z": "7156df95dd73e491",
+        "name": "Temperature Transformation (Historical)",
+        "func": "let data = [];\n\nfor (let item of msg.payload) {\n\n    data.push({\n        x: new Date(item._time),\n        y: item._value\n    });\n\n}\n\nmsg.payload = [{\n    series: [\"Temperature\"],\n    data: [data],\n    labels: []\n}];\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 560,
+        "y": 60,
+        "wires": [
+            [
+                "4368a294540a823e"
+            ]
+        ]
+    },
+    {
+        "id": "46b6e970c1712ca5",
         "type": "inject",
-        "z": "51bcf57d9b169a2e",
+        "z": "7156df95dd73e491",
         "name": "Inject",
         "props": [
             {
@@ -359,101 +414,140 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 110,
-        "y": 300,
+        "x": 90,
+        "y": 60,
         "wires": [
             [
-                "6c065bb65ab84d1b"
+                "0eece5e2d22463e1"
             ]
         ]
     },
     {
-        "id": "6c065bb65ab84d1b",
+        "id": "8b110a03630b1275",
+        "type": "inject",
+        "z": "7156df95dd73e491",
+        "name": "Inject",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "0.5",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 90,
+        "y": 120,
+        "wires": [
+            [
+                "2691ae4fe1034b48"
+            ]
+        ]
+    },
+    {
+        "id": "2691ae4fe1034b48",
         "type": "influxdb in",
-        "z": "51bcf57d9b169a2e",
+        "z": "7156df95dd73e491",
         "influxdb": "22840f6e7c5bb62b",
-        "name": "Temperature Query",
-        "query": "from(bucket: \"sensor-data\")\n  |> range(start: -7d)\n  |> filter(fn: (r) => r._measurement == \"environment\")\n  |> filter(fn: (r) => r._field == \"temperature\")",
+        "name": "Humidity Query",
+        "query": "from(bucket: \"sensor-data\")\n  |> range(start: -7d)\n  |> filter(fn: (r) => r._measurement == \"environment\")\n  |> filter(fn: (r) => r._field == \"humidity\")",
         "rawOutput": false,
         "precision": "",
         "retentionPolicy": "",
         "org": "ll224ve-iot",
-        "x": 310,
-        "y": 300,
+        "x": 260,
+        "y": 120,
         "wires": [
             [
-                "83b071281e9971e3"
+                "a03f52d927bc855b"
             ]
         ]
     },
     {
-        "id": "83b071281e9971e3",
+        "id": "a03f52d927bc855b",
         "type": "function",
-        "z": "51bcf57d9b169a2e",
-        "name": "Temperature Transformation (Historical)",
-        "func": "let data = [];\n\nfor (let item of msg.payload) {\n\n    data.push({\n        x: new Date(item._time),\n        y: item._value\n    });\n\n}\n\nmsg.payload = [{\n    series: [\"Temperature\"],\n    data: [data],\n    labels: []\n}];\n\nreturn msg;",
+        "z": "7156df95dd73e491",
+        "name": "Humidity Transformation (Historical)",
+        "func": "let data = [];\n\nfor (let item of msg.payload) {\n\n    data.push({\n        x: new Date(item._time),\n        y: item._value\n    });\n\n}\n\nmsg.payload = [{\n    series: [\"Humidity\"],\n    data: [data],\n    labels: []\n}];\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 620,
-        "y": 300,
+        "x": 520,
+        "y": 120,
         "wires": [
             [
-                "9c48749a5393463d"
+                "10074e89ef2d9a31"
             ]
         ]
     },
     {
-        "id": "9c48749a5393463d",
-        "type": "ui_chart",
-        "z": "51bcf57d9b169a2e",
-        "name": "Temperature Chart",
-        "group": "cae9c8a296b1b940",
-        "order": 2,
-        "width": "12",
-        "height": "6",
-        "label": "🌡 Temperature Chart",
-        "chartType": "line",
-        "legend": "false",
-        "xformat": "HH:mm:ss",
-        "interpolate": "linear",
-        "nodata": "",
-        "dot": false,
-        "ymin": "-10",
-        "ymax": "50",
-        "removeOlder": "30",
-        "removeOlderPoints": "500",
-        "removeOlderUnit": "60",
-        "cutout": 0,
-        "useOneColor": false,
-        "useUTC": false,
-        "colors": [
-            "#f98c43",
-            "#aec7e8",
-            "#ff7f0e",
-            "#2ca02c",
-            "#98df8a",
-            "#d62728",
-            "#ff9896",
-            "#9467bd",
-            "#c5b0d5"
+        "id": "4368a294540a823e",
+        "type": "link out",
+        "z": "7156df95dd73e491",
+        "name": "Historical Temperature",
+        "mode": "link",
+        "links": [
+            "4e5882050879090b"
         ],
-        "outputs": 1,
-        "useDifferentColor": false,
-        "className": "",
-        "x": 930,
-        "y": 420,
-        "wires": [
-            []
-        ]
+        "x": 775,
+        "y": 60,
+        "wires": []
     },
     {
-        "id": "a52fcc1804afef9a",
+        "id": "10074e89ef2d9a31",
+        "type": "link out",
+        "z": "7156df95dd73e491",
+        "name": "Historical Humidity",
+        "mode": "link",
+        "links": [
+            "bea6c14a1ea60476"
+        ],
+        "x": 715,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "a3d35af99d0b777a",
+        "type": "ui_gauge",
+        "z": "93e19b05538bf5eb",
+        "name": "",
+        "group": "cae9c8a296b1b940",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "Temperature",
+        "label": "°C",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "50",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 670,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "5d556db2d55e1c31",
         "type": "mqtt in",
-        "z": "51bcf57d9b169a2e",
+        "z": "93e19b05538bf5eb",
         "name": "",
         "topic": "lnu/iot/ll224ve/sensor",
         "qos": "2",
@@ -463,18 +557,18 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 160,
-        "y": 380,
+        "x": 140,
+        "y": 40,
         "wires": [
             [
-                "6e6ef5029309a52c"
+                "6ea8ee2716d7cdee"
             ]
         ]
     },
     {
-        "id": "6e6ef5029309a52c",
+        "id": "6ea8ee2716d7cdee",
         "type": "function",
-        "z": "51bcf57d9b169a2e",
+        "z": "93e19b05538bf5eb",
         "name": "Temperature Transformation (Live)",
         "func": "msg.payload = msg.payload.temperature;\nreturn msg;",
         "outputs": 1,
@@ -483,86 +577,224 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 460,
-        "y": 380,
+        "x": 420,
+        "y": 40,
         "wires": [
             [
-                "9c48749a5393463d"
+                "a3d35af99d0b777a"
             ]
         ]
     },
     {
-        "id": "f6ea5cac6ff005e0",
-        "type": "inject",
-        "z": "51bcf57d9b169a2e",
-        "name": "Inject",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": true,
-        "onceDelay": "0.5",
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 110,
-        "y": 460,
+        "id": "8d7a3a684a49f672",
+        "type": "ui_text",
+        "z": "93e19b05538bf5eb",
+        "group": "cae9c8a296b1b940",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Current Temperature",
+        "format": "{{msg.payload}}°C",
+        "layout": "row-center",
+        "className": "",
+        "style": true,
+        "font": "Arial,Arial,Helvetica,sans-serif",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 700,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "60967fcf3673c4a0",
+        "type": "mqtt in",
+        "z": "93e19b05538bf5eb",
+        "name": "",
+        "topic": "lnu/iot/ll224ve/sensor",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "becc0d776c5ade83",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 140,
+        "y": 120,
         "wires": [
             [
-                "35ac101e29e5d5d7"
+                "0dd66c48a1178a8a"
             ]
         ]
     },
     {
-        "id": "35ac101e29e5d5d7",
-        "type": "influxdb in",
-        "z": "51bcf57d9b169a2e",
-        "influxdb": "22840f6e7c5bb62b",
-        "name": "Humidity Query",
-        "query": "from(bucket: \"sensor-data\")\n  |> range(start: -7d)\n  |> filter(fn: (r) => r._measurement == \"environment\")\n  |> filter(fn: (r) => r._field == \"humidity\")",
-        "rawOutput": false,
-        "precision": "",
-        "retentionPolicy": "",
-        "org": "ll224ve-iot",
-        "x": 300,
-        "y": 460,
-        "wires": [
-            [
-                "cf70c7f7b2998ff1"
-            ]
-        ]
-    },
-    {
-        "id": "cf70c7f7b2998ff1",
+        "id": "0dd66c48a1178a8a",
         "type": "function",
-        "z": "51bcf57d9b169a2e",
-        "name": "Humidity Transformation (Historical)",
-        "func": "let data = [];\n\nfor (let item of msg.payload) {\n\n    data.push({\n        x: new Date(item._time),\n        y: item._value\n    });\n\n}\n\nmsg.payload = [{\n    series: [\"Humidity\"],\n    data: [data],\n    labels: []\n}];\n\nreturn msg;",
+        "z": "93e19b05538bf5eb",
+        "name": "Temperature Transformation (Live)",
+        "func": "msg.payload = msg.payload.temperature;\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 580,
-        "y": 460,
+        "x": 420,
+        "y": 120,
         "wires": [
             [
-                "a7dc174f7d55369c"
+                "8d7a3a684a49f672"
             ]
         ]
     },
     {
-        "id": "a7dc174f7d55369c",
+        "id": "de1f069ec030c0fd",
+        "type": "mqtt in",
+        "z": "93e19b05538bf5eb",
+        "name": "",
+        "topic": "lnu/iot/ll224ve/sensor",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "becc0d776c5ade83",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 140,
+        "y": 180,
+        "wires": [
+            [
+                "1e90d8875346086d"
+            ]
+        ]
+    },
+    {
+        "id": "1e90d8875346086d",
+        "type": "function",
+        "z": "93e19b05538bf5eb",
+        "name": "Humdity Transformation (Live)",
+        "func": "msg.payload = msg.payload.humidity;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 180,
+        "wires": [
+            [
+                "93e174366c915f30"
+            ]
+        ]
+    },
+    {
+        "id": "93e174366c915f30",
+        "type": "ui_text",
+        "z": "93e19b05538bf5eb",
+        "group": "cae9c8a296b1b940",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Current Humidity",
+        "format": "{{msg.payload}}%",
+        "layout": "row-center",
+        "className": "",
+        "style": true,
+        "font": "Arial,Arial,Helvetica,sans-serif",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 670,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "f9bc696c8d911932",
+        "type": "mqtt in",
+        "z": "93e19b05538bf5eb",
+        "name": "",
+        "topic": "lnu/iot/ll224ve/sensor",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "becc0d776c5ade83",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 140,
+        "y": 280,
+        "wires": [
+            [
+                "75af7c6bee077e79"
+            ]
+        ]
+    },
+    {
+        "id": "75af7c6bee077e79",
+        "type": "function",
+        "z": "93e19b05538bf5eb",
+        "name": "Temperature Transformation (Live)",
+        "func": "msg.payload = msg.payload.temperature;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 280,
+        "wires": [
+            [
+                "9b970516d16f9801"
+            ]
+        ]
+    },
+    {
+        "id": "354f46974806bb8d",
+        "type": "mqtt in",
+        "z": "93e19b05538bf5eb",
+        "name": "",
+        "topic": "lnu/iot/ll224ve/sensor",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "becc0d776c5ade83",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 140,
+        "y": 420,
+        "wires": [
+            [
+                "f4d8fe05ece93835"
+            ]
+        ]
+    },
+    {
+        "id": "f4d8fe05ece93835",
+        "type": "function",
+        "z": "93e19b05538bf5eb",
+        "name": "Humdity Transformation (Live)",
+        "func": "msg.payload = msg.payload.humidity;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 420,
+        "wires": [
+            [
+                "e4181edf39cfea43"
+            ]
+        ]
+    },
+    {
+        "id": "e4181edf39cfea43",
         "type": "ui_chart",
-        "z": "51bcf57d9b169a2e",
+        "z": "93e19b05538bf5eb",
         "name": "Humidity Chart",
         "group": "cae9c8a296b1b940",
         "order": 4,
@@ -597,248 +829,90 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 860,
-        "y": 500,
+        "x": 700,
+        "y": 440,
         "wires": [
             []
         ]
     },
     {
-        "id": "8f6ff14decc6e28a",
-        "type": "mqtt in",
-        "z": "51bcf57d9b169a2e",
-        "name": "",
-        "topic": "lnu/iot/ll224ve/sensor",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "becc0d776c5ade83",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 160,
-        "y": 540,
-        "wires": [
-            [
-                "6ff7ebbc57bfbed7"
-            ]
-        ]
-    },
-    {
-        "id": "6ff7ebbc57bfbed7",
-        "type": "function",
-        "z": "51bcf57d9b169a2e",
-        "name": "Humdity Transformation (Live)",
-        "func": "msg.payload = msg.payload.humidity;\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 450,
-        "y": 540,
-        "wires": [
-            [
-                "a7dc174f7d55369c"
-            ]
-        ]
-    },
-    {
-        "id": "be03440a8e9df6c5",
-        "type": "ui_gauge",
-        "z": "51bcf57d9b169a2e",
-        "name": "",
+        "id": "9b970516d16f9801",
+        "type": "ui_chart",
+        "z": "93e19b05538bf5eb",
+        "name": "Temperature Chart",
         "group": "cae9c8a296b1b940",
-        "order": 1,
-        "width": 0,
-        "height": 0,
-        "gtype": "gage",
-        "title": "Temperature",
-        "label": "°C",
-        "format": "{{value}}",
-        "min": 0,
-        "max": "50",
+        "order": 2,
+        "width": "12",
+        "height": "6",
+        "label": "🌡 Temperature Chart",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "-10",
+        "ymax": "50",
+        "removeOlder": "30",
+        "removeOlderPoints": "500",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
         "colors": [
-            "#00b500",
-            "#e6e600",
-            "#ca3838"
+            "#f98c43",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
         ],
-        "seg1": "",
-        "seg2": "",
-        "diff": false,
-        "className": "",
-        "x": 730,
-        "y": 620,
-        "wires": []
-    },
-    {
-        "id": "058a9d7d3d752fcd",
-        "type": "mqtt in",
-        "z": "51bcf57d9b169a2e",
-        "name": "",
-        "topic": "lnu/iot/ll224ve/sensor",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "becc0d776c5ade83",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 160,
-        "y": 620,
-        "wires": [
-            [
-                "095ded45616bc04a"
-            ]
-        ]
-    },
-    {
-        "id": "095ded45616bc04a",
-        "type": "function",
-        "z": "51bcf57d9b169a2e",
-        "name": "Temperature Transformation (Live)",
-        "func": "msg.payload = msg.payload.temperature;\nreturn msg;",
         "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 460,
-        "y": 620,
-        "wires": [
-            [
-                "be03440a8e9df6c5"
-            ]
-        ]
-    },
-    {
-        "id": "1db13ef12171acac",
-        "type": "ui_text",
-        "z": "51bcf57d9b169a2e",
-        "group": "cae9c8a296b1b940",
-        "order": 3,
-        "width": 0,
-        "height": 0,
-        "name": "",
-        "label": "Current Temperature",
-        "format": "{{msg.payload}}°C",
-        "layout": "row-center",
+        "useDifferentColor": false,
         "className": "",
-        "style": true,
-        "font": "Arial,Arial,Helvetica,sans-serif",
-        "fontSize": 16,
-        "color": "#000000",
-        "x": 760,
-        "y": 700,
-        "wires": []
+        "x": 710,
+        "y": 320,
+        "wires": [
+            []
+        ]
     },
     {
-        "id": "4140fa4ec917022d",
-        "type": "mqtt in",
-        "z": "51bcf57d9b169a2e",
-        "name": "",
-        "topic": "lnu/iot/ll224ve/sensor",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "becc0d776c5ade83",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 160,
-        "y": 700,
+        "id": "4e5882050879090b",
+        "type": "link in",
+        "z": "93e19b05538bf5eb",
+        "name": "Link in - Temperature",
+        "links": [
+            "4368a294540a823e"
+        ],
+        "x": 515,
+        "y": 340,
         "wires": [
             [
-                "dedbfa53c9bf8a32"
+                "9b970516d16f9801"
             ]
         ]
     },
     {
-        "id": "dedbfa53c9bf8a32",
-        "type": "function",
-        "z": "51bcf57d9b169a2e",
-        "name": "Temperature Transformation (Live)",
-        "func": "msg.payload = msg.payload.temperature;\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 460,
-        "y": 700,
+        "id": "bea6c14a1ea60476",
+        "type": "link in",
+        "z": "93e19b05538bf5eb",
+        "name": "Link in - Humidity",
+        "links": [
+            "10074e89ef2d9a31"
+        ],
+        "x": 515,
+        "y": 480,
         "wires": [
             [
-                "1db13ef12171acac"
+                "e4181edf39cfea43"
             ]
         ]
     },
     {
-        "id": "cdf70b3199b55c0e",
-        "type": "mqtt in",
-        "z": "51bcf57d9b169a2e",
-        "name": "",
-        "topic": "lnu/iot/ll224ve/sensor",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "becc0d776c5ade83",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 160,
-        "y": 760,
-        "wires": [
-            [
-                "d1909f4a44b712b9"
-            ]
-        ]
-    },
-    {
-        "id": "d1909f4a44b712b9",
-        "type": "function",
-        "z": "51bcf57d9b169a2e",
-        "name": "Humdity Transformation (Live)",
-        "func": "msg.payload = msg.payload.humidity;\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 450,
-        "y": 760,
-        "wires": [
-            [
-                "07b1658c52657278"
-            ]
-        ]
-    },
-    {
-        "id": "07b1658c52657278",
-        "type": "ui_text",
-        "z": "51bcf57d9b169a2e",
-        "group": "cae9c8a296b1b940",
-        "order": 5,
-        "width": 0,
-        "height": 0,
-        "name": "",
-        "label": "Current Humidity",
-        "format": "{{msg.payload}}%",
-        "layout": "row-center",
-        "className": "",
-        "style": true,
-        "font": "Arial,Arial,Helvetica,sans-serif",
-        "fontSize": 16,
-        "color": "#000000",
-        "x": 730,
-        "y": 760,
-        "wires": []
-    },
-    {
-        "id": "161939d8d045fdae",
+        "id": "3dfe9dccda5925c0",
         "type": "global-config",
         "env": [],
         "modules": {
