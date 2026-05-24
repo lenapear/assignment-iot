@@ -199,10 +199,11 @@
         "rh": 0,
         "inputs": 0,
         "x": 140,
-        "y": 40,
+        "y": 60,
         "wires": [
             [
-                "8234ddb491bddb0f"
+                "8234ddb491bddb0f",
+                "b555122bdca27fb8"
             ]
         ]
     },
@@ -244,30 +245,12 @@
         "topic": "topic",
         "topicType": "msg",
         "x": 100,
-        "y": 180,
+        "y": 160,
         "wires": [
             [
-                "d049fa9498ad24ad"
+                "146e4e9159a5769b"
             ]
         ]
-    },
-    {
-        "id": "d049fa9498ad24ad",
-        "type": "mqtt out",
-        "z": "51bcf57d9b169a2e",
-        "name": "",
-        "topic": "lnu/iot/ll224ve/command/led",
-        "qos": "",
-        "retain": "",
-        "respTopic": "",
-        "contentType": "",
-        "userProps": "",
-        "correl": "",
-        "expiry": "",
-        "broker": "becc0d776c5ade83",
-        "x": 340,
-        "y": 180,
-        "wires": []
     },
     {
         "id": "ce3238f4a462d4cd",
@@ -290,7 +273,7 @@
         "topic": "topic",
         "topicType": "msg",
         "x": 100,
-        "y": 240,
+        "y": 220,
         "wires": [
             [
                 "146e4e9159a5769b"
@@ -312,29 +295,8 @@
         "expiry": "",
         "broker": "becc0d776c5ade83",
         "x": 340,
-        "y": 240,
+        "y": 180,
         "wires": []
-    },
-    {
-        "id": "9a74ed76d42188fc",
-        "type": "mqtt in",
-        "z": "51bcf57d9b169a2e",
-        "name": "",
-        "topic": "lnu/iot/ll224ve/sensor",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "becc0d776c5ade83",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 140,
-        "y": 100,
-        "wires": [
-            [
-                "b555122bdca27fb8"
-            ]
-        ]
     },
     {
         "id": "b555122bdca27fb8",
@@ -351,7 +313,7 @@
         "org": "ll224ve-iot",
         "bucket": "sensor-data",
         "x": 360,
-        "y": 100,
+        "y": 80,
         "wires": []
     },
     {
@@ -360,7 +322,7 @@
         "z": "7156df95dd73e491",
         "influxdb": "22840f6e7c5bb62b",
         "name": "Temperature Query",
-        "query": "from(bucket: \"sensor-data\")\n  |> range(start: -7d)\n  |> filter(fn: (r) => r._measurement == \"environment\")\n  |> filter(fn: (r) => r._field == \"temperature\")",
+        "query": "from(bucket: \"sensor-data\")\n  |> range(start: -30m)\n  |> filter(fn: (r) => r._measurement == \"environment\")\n  |> filter(fn: (r) => r._field == \"temperature\")",
         "rawOutput": false,
         "precision": "",
         "retentionPolicy": "",
@@ -457,7 +419,7 @@
         "z": "7156df95dd73e491",
         "influxdb": "22840f6e7c5bb62b",
         "name": "Humidity Query",
-        "query": "from(bucket: \"sensor-data\")\n  |> range(start: -7d)\n  |> filter(fn: (r) => r._measurement == \"environment\")\n  |> filter(fn: (r) => r._field == \"humidity\")",
+        "query": "from(bucket: \"sensor-data\")\n  |> range(start: -30m)\n  |> filter(fn: (r) => r._measurement == \"environment\")\n  |> filter(fn: (r) => r._field == \"humidity\")",
         "rawOutput": false,
         "precision": "",
         "retentionPolicy": "",
@@ -497,7 +459,8 @@
         "name": "Historical Temperature",
         "mode": "link",
         "links": [
-            "4e5882050879090b"
+            "4e5882050879090b",
+            "b17065b5536aac19"
         ],
         "x": 775,
         "y": 60,
@@ -557,11 +520,15 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 140,
-        "y": 40,
+        "x": 120,
+        "y": 240,
         "wires": [
             [
-                "6ea8ee2716d7cdee"
+                "6ea8ee2716d7cdee",
+                "af78d16ff52d50a8",
+                "1e90d8875346086d",
+                "75af7c6bee077e79",
+                "f4d8fe05ece93835"
             ]
         ]
     },
@@ -586,89 +553,6 @@
         ]
     },
     {
-        "id": "8d7a3a684a49f672",
-        "type": "ui_text",
-        "z": "93e19b05538bf5eb",
-        "group": "cae9c8a296b1b940",
-        "order": 3,
-        "width": 0,
-        "height": 0,
-        "name": "",
-        "label": "Current Temperature",
-        "format": "{{msg.payload}}°C",
-        "layout": "row-center",
-        "className": "",
-        "style": true,
-        "font": "Arial,Arial,Helvetica,sans-serif",
-        "fontSize": 16,
-        "color": "#000000",
-        "x": 700,
-        "y": 120,
-        "wires": []
-    },
-    {
-        "id": "60967fcf3673c4a0",
-        "type": "mqtt in",
-        "z": "93e19b05538bf5eb",
-        "name": "",
-        "topic": "lnu/iot/ll224ve/sensor",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "becc0d776c5ade83",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 140,
-        "y": 120,
-        "wires": [
-            [
-                "0dd66c48a1178a8a"
-            ]
-        ]
-    },
-    {
-        "id": "0dd66c48a1178a8a",
-        "type": "function",
-        "z": "93e19b05538bf5eb",
-        "name": "Temperature Transformation (Live)",
-        "func": "msg.payload = msg.payload.temperature;\nreturn msg;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 420,
-        "y": 120,
-        "wires": [
-            [
-                "8d7a3a684a49f672"
-            ]
-        ]
-    },
-    {
-        "id": "de1f069ec030c0fd",
-        "type": "mqtt in",
-        "z": "93e19b05538bf5eb",
-        "name": "",
-        "topic": "lnu/iot/ll224ve/sensor",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "becc0d776c5ade83",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 140,
-        "y": 180,
-        "wires": [
-            [
-                "1e90d8875346086d"
-            ]
-        ]
-    },
-    {
         "id": "1e90d8875346086d",
         "type": "function",
         "z": "93e19b05538bf5eb",
@@ -681,7 +565,7 @@
         "finalize": "",
         "libs": [],
         "x": 410,
-        "y": 180,
+        "y": 200,
         "wires": [
             [
                 "93e174366c915f30"
@@ -706,29 +590,8 @@
         "fontSize": 16,
         "color": "#000000",
         "x": 670,
-        "y": 180,
+        "y": 200,
         "wires": []
-    },
-    {
-        "id": "f9bc696c8d911932",
-        "type": "mqtt in",
-        "z": "93e19b05538bf5eb",
-        "name": "",
-        "topic": "lnu/iot/ll224ve/sensor",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "becc0d776c5ade83",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 140,
-        "y": 280,
-        "wires": [
-            [
-                "75af7c6bee077e79"
-            ]
-        ]
     },
     {
         "id": "75af7c6bee077e79",
@@ -751,27 +614,6 @@
         ]
     },
     {
-        "id": "354f46974806bb8d",
-        "type": "mqtt in",
-        "z": "93e19b05538bf5eb",
-        "name": "",
-        "topic": "lnu/iot/ll224ve/sensor",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "becc0d776c5ade83",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 140,
-        "y": 420,
-        "wires": [
-            [
-                "f4d8fe05ece93835"
-            ]
-        ]
-    },
-    {
         "id": "f4d8fe05ece93835",
         "type": "function",
         "z": "93e19b05538bf5eb",
@@ -784,7 +626,7 @@
         "finalize": "",
         "libs": [],
         "x": 410,
-        "y": 420,
+        "y": 380,
         "wires": [
             [
                 "e4181edf39cfea43"
@@ -829,8 +671,8 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 700,
-        "y": 440,
+        "x": 680,
+        "y": 380,
         "wires": [
             []
         ]
@@ -874,7 +716,7 @@
         "useDifferentColor": false,
         "className": "",
         "x": 710,
-        "y": 320,
+        "y": 280,
         "wires": [
             []
         ]
@@ -888,7 +730,7 @@
             "4368a294540a823e"
         ],
         "x": 515,
-        "y": 340,
+        "y": 320,
         "wires": [
             [
                 "9b970516d16f9801"
@@ -904,7 +746,7 @@
             "10074e89ef2d9a31"
         ],
         "x": 515,
-        "y": 480,
+        "y": 420,
         "wires": [
             [
                 "e4181edf39cfea43"
@@ -912,7 +754,48 @@
         ]
     },
     {
-        "id": "3dfe9dccda5925c0",
+        "id": "af78d16ff52d50a8",
+        "type": "function",
+        "z": "93e19b05538bf5eb",
+        "name": "Temperature Transformation (Live)",
+        "func": "msg.payload = msg.payload.temperature;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 420,
+        "y": 120,
+        "wires": [
+            [
+                "67f81938262a46bd"
+            ]
+        ]
+    },
+    {
+        "id": "67f81938262a46bd",
+        "type": "ui_text",
+        "z": "93e19b05538bf5eb",
+        "group": "cae9c8a296b1b940",
+        "order": 5,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Current Temperature",
+        "format": "{{msg.payload}}%",
+        "layout": "row-center",
+        "className": "",
+        "style": true,
+        "font": "Arial,Arial,Helvetica,sans-serif",
+        "fontSize": 16,
+        "color": "#000000",
+        "x": 700,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "e3e3f277bcbf5cd0",
         "type": "global-config",
         "env": [],
         "modules": {
