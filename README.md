@@ -1,29 +1,46 @@
 # Assignment: Internet of Things (IoT)
 
 ### 1) Project Links
-- **Live Dashboard URL:** [Link to deployed frontend, e.g. Vercel/Netlify/Cumulus]
-- **Wokwi Simulation URL:** [Public Wokwi project link]
-- **Backend/Database URL:** [Link to deployed backend stack, if applicable]
-- **Repository URL:** [Link to your source code]
+- **Live Dashboard URL:** Render - [https://assignment-iot.onrender.com/ui](https://assignment-iot.onrender.com/ui)
+
+Note: The Render free-tier deployment may require up to one minute to wake from inactivity.
+- **Wokwi Simulation URL:** [Public Wokwi project link](https://wokwi.com/projects/463906891539102721)
+- **Backend/Database URL:** [https://assignment-iot.onrender.com](https://assignment-iot.onrender.com)
+- **Repository URL:** [GitHub](https://github.com/lenapear/assignment-iot)
 
 ### 2) Project Overview
-This project implements a complete Internet of Things (IoT) system using a simulated ESP32 device in Wokwi. The device reads environmental data from a DHT22 sensor, including temperature and humidity, and publishes this data to an MQTT broker at regular intervals.
 
-Node-RED is used as the central processing layer. It subscribes to the MQTT sensor data, stores it in an InfluxDB time-series database, and provides both real-time and historical visualisation through a dashboard interface.
+#### Dashboard Interface
 
-The dashboard also allows users to send control commands back to the simulated device, enabling LED control through MQTT. This demonstrates a full bi-directional IoT communication pipeline.
+The dashboard displays live sensor values, historical chart visualisation, and LED control buttons for interacting with the simulated device.
+
+![Dashboard Screenshot](images/dashboard.png)
+
+#### Note About Historical Data
+
+The dashboard queries and visualizes the most recent 30 minutes of sensor data from InfluxDB.
+
+If no simulator data has been published within the last 30 minutes, the historical charts may initially appear empty. To generate new historical data, start the Wokwi simulation and allow sensor values to publish for a short period of time.
+
+Live dashboard updates and historical visualization will then begin automatically.
 
 ### 3) Architecture and Data Flow
 
-[TO DO: Add Mermaid FlowChart Screenshot]()
+![](images/flowchart.png)
 
 The system follows a publish-subscribe architecture using MQTT as the communication protocol.
 
 The Wokwi simulated device publishes sensor data (temperature and humidity) to a public MQTT broker. Node-RED subscribes to this topic, processes incoming messages, and stores the data in InfluxDB for persistence.
 
-The dashboard retrieves real-time updates directly from MQTT, while historical data is fetched from InfluxDB using query nodes.
+The dashboard displays real-time MQTT updates while historical sensor data is retrieved from InfluxDB using query nodes.
 
-User interactions on the dashboard generate MQTT messages that are sent back through the broker to the Wokwi device, allowing control of an LED actuator.
+Dashboard interactions publish MQTT control messages back to the Wokwi device, allowing LED control.
+
+#### System Demonstration
+
+The image below demonstrates the communication between the Wokwi simulator and the deployed dashboard. Sensor data is published in real time while dashboard commands control the LED state on the simulated ESP32 device.
+
+![System Demonstration](images/system-demo.png)
 
 ### 4) Database Strategy
 The system uses InfluxDB Cloud as a time-series database for storing sensor data.
