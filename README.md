@@ -88,4 +88,4 @@ Node-RED was used as both the backend and dashboard layer due to its strong inte
 
 Real-time MQTT communication differs from traditional REST APIs because data is pushed continuously rather than requested on demand. This allows near-instant updates in the dashboard without manual refresh.
 
-The most challenging part of the project was integrating all components (Wokwi device, MQTT broker, Node-RED, and InfluxDB). Ensuring consistent topic structure and correct data formatting was essential to achieve reliable end-to-end communication.
+The most challenging part of the project was configuring communication between all system components and troubleshooting deployment issues related to cloud-based services and credentials.
