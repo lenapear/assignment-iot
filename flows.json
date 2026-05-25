@@ -459,8 +459,7 @@
         "name": "Historical Temperature",
         "mode": "link",
         "links": [
-            "4e5882050879090b",
-            "b17065b5536aac19"
+            "4e5882050879090b"
         ],
         "x": 775,
         "y": 60,
@@ -793,14 +792,5 @@
         "x": 700,
         "y": 120,
         "wires": []
-    },
-    {
-        "id": "e3e3f277bcbf5cd0",
-        "type": "global-config",
-        "env": [],
-        "modules": {
-            "node-red-dashboard": "3.6.6",
-            "node-red-contrib-influxdb": "0.7.0"
-        }
     }
 ]
