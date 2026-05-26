@@ -50,6 +50,7 @@ The system uses InfluxDB Cloud as a time-series database for storing sensor data
 **Fields:**
 - temperature (°C)
 - humidity (%)
+
 **Timestamp:** automatically generated or derived from incoming data
 
 InfluxDB was chosen because it is optimized for continuous time-series data. It allows efficient storage and querying of sensor data over time.
@@ -84,8 +85,10 @@ The command topic is used by the dashboard to send control messages to the devic
 
 
 ### 6) Reflection
-Node-RED was used as both the backend and dashboard layer due to its strong integration with MQTT and InfluxDB, making it suitable for rapid IoT prototyping.
+For this project, Node-RED was chosen as both the backend and dashboard solution because it provided a simpler and faster way to build the IoT pipeline within the limited assignment timeframe. Since this was my first larger IoT project, I wanted to focus on understanding the core concepts such as MQTT communication, real-time data handling, database integration, and device control before building a more custom solution.
 
-Real-time MQTT communication differs from traditional REST APIs because data is pushed continuously rather than requested on demand. This allows near-instant updates in the dashboard without manual refresh.
+Using Node-RED made it easier to connect MQTT, InfluxDB, and the dashboard together without needing to spend most of the time building frontend and backend infrastructure from scratch. However, since I already have previous experience with frontend development, I could see myself building a custom dashboard in the future now that I better understand how the underlying IoT communication flow works.
 
-The most challenging part of the project was configuring communication between all system components and troubleshooting deployment issues related to cloud-based services and credentials.
+Real-time MQTT communication differs from traditional REST APIs because data is continuously pushed between devices and services instead of being manually requested through separate HTTP calls. This allows the dashboard to update almost instantly when new sensor values are published.
+
+The most challenging part of the project was configuring communication between all system components and troubleshooting deployment issues related to cloud-based services, credentials, and database connections.
